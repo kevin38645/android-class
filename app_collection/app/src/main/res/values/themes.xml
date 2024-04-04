@@ -1,11 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.Toast" parent="Theme.AppCompat.DayNight.DarkActionBar">
+    <style name="Base.Theme.App_collection" parent="Theme.AppCompat.DayNight.DarkActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="colorPrimary">@color/blue_500</item>
-
     </style>
 
-    <style name="Theme.Toast" parent="Base.Theme.Toast" />
+    <style name="Theme.App_collection" parent="Base.Theme.App_collection" />
 </resources>
