@@ -20,5 +20,9 @@
         <item name="android:layout_marginRight">10dp</item> <!-- 調整左邊間距 -->
     </style>
 
+    <style name="MyScrollBarTheme" parent="Theme.AppCompat">
+        <item name="android:colorAccent">@color/blue_500</item>
+    </style>
+
     <style name="Theme.App_collection" parent="Base.Theme.App_collection" />
 </resources>
