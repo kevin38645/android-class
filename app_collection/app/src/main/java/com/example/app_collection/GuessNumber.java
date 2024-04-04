@@ -9,14 +9,75 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
 public class GuessNumber extends AppCompatActivity implements DialogInterface.OnClickListener {
+    String GameMode;
+    String expectNumber = "";
+    Spinner selectNumSpinner1;
+    Spinner selectNumSpinner2;
+    Spinner selectNumSpinner3;
+    Spinner selectNumSpinner4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guess_number);
+
+        Initial();
+    }
+
+    void Initial(){
+        GameMode = "NoRepeat";
+       selectNumSpinner1 = findViewById(R.id.numberSelection1);
+       selectNumSpinner2 = findViewById(R.id.numberSelection2);
+       selectNumSpinner3 = findViewById(R.id.numberSelection3);
+       selectNumSpinner4 = findViewById(R.id.numberSelection4);
+       RandomNumber();
+    }
+
+    void RandomNumber(){
+        Random random = new Random();
+
+        switch (GameMode){
+            case "NoRepeat":
+                List<Integer> numbers = new ArrayList<>();
+                for (int i = 0; i < 10; i++) {
+                    numbers.add(i);
+                }
+                Collections.shuffle(numbers);
+                List<Integer> selectedNumbers = numbers.subList(0, 4);
+                for(int i=0;i< selectedNumbers.size();i++){
+                    expectNumber += selectedNumbers.get(i);
+                }
+                System.out.println(selectedNumbers);
+                break;
+            case "HasRepeat":
+                for (int i =0 ;i <4;i++){
+                    int randomNumber = random.nextInt(10);
+                    expectNumber += randomNumber;
+                }
+                break;
+        }
+        TextView textView = (TextView) findViewById(R.id.answer_debug);
+        textView.setText(expectNumber);
+    }
+
+    public void GuessNumber(View view){
+        String selectedValue1 = selectNumSpinner1.getSelectedItem().toString();
+        String selectedValue2 = selectNumSpinner2.getSelectedItem().toString();
+        String selectedValue3 = selectNumSpinner3.getSelectedItem().toString();
+        String selectedValue4 = selectNumSpinner4.getSelectedItem().toString();
+        TextView textView = (TextView) findViewById(R.id.player_guess);
+        String result = selectedValue1 + selectedValue2 + selectedValue3 + selectedValue4;
+        textView.setText(result);
     }
 
     public void alertButtonClick(View view){
@@ -42,8 +103,5 @@ public class GuessNumber extends AppCompatActivity implements DialogInterface.On
         }
     }
 
-    public void click_button1(View view) {
-
-    }
 
 }

@@ -25,7 +25,8 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
     public void click_button1(View view) {
-
+        Intent intent = new Intent(this, GuessNumber.class);
+        startActivity(intent);
     }
 
 

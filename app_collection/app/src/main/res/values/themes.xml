@@ -6,5 +6,19 @@
         <item name="colorPrimary">@color/blue_500</item>
     </style>
 
+    <style name="NumberListSpinnerStyle" parent="Widget.AppCompat.Spinner">
+        <item name="android:paddingRight">20dp</item> <!-- 調整右邊間距 -->
+        <item name="android:paddingLeft">15dp</item> <!-- 調整左邊間距 -->
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginRight">5dp</item>
+    </style>
+
+    <style name="textMargin" >
+        <item name="android:layout_marginLeft">10dp</item> <!-- 調整右邊間距 -->
+        <item name="android:layout_marginRight">10dp</item> <!-- 調整左邊間距 -->
+    </style>
+
     <style name="Theme.App_collection" parent="Base.Theme.App_collection" />
 </resources>
