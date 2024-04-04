@@ -24,5 +24,10 @@
         <item name="android:colorAccent">@color/blue_500</item>
     </style>
 
+    <style name="DefaultButtonStyle">
+        <item name="android:backgroundTint">@color/blue_500</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
     <style name="Theme.App_collection" parent="Base.Theme.App_collection" />
 </resources>
