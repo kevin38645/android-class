@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-    public void click_button1(View view) {
+    public void play_guess_game(View view) {
         Intent intent = new Intent(this, GuessNumber.class);
         startActivity(intent);
     }

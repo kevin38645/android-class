@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Debug;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -16,8 +17,10 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 public class GuessNumber extends AppCompatActivity{
     String currentGameMode;
@@ -43,7 +46,7 @@ public class GuessNumber extends AppCompatActivity{
     }
 
     void Initial(){
-        currentGameMode = "NoRepeat";
+        currentGameMode = "HasRepeat";
         selectNumSpinner1 = findViewById(R.id.numberSelection1);
         selectNumSpinner2 = findViewById(R.id.numberSelection2);
         selectNumSpinner3 = findViewById(R.id.numberSelection3);
@@ -52,31 +55,31 @@ public class GuessNumber extends AppCompatActivity{
         buttonGuess = findViewById(R.id.GuessNumber);
         answer_debug = findViewById(R.id.answer_debug);
         player_guess = findViewById(R.id.player_guess);
-        ModeChange("NoRepeat");
+        ModeChange(currentGameMode);
        RandomNumber();
        warning_textView = findViewById(R.id.warning_text);
     }
 
     void ModeChange(String gameMode){
+        currentGameMode = gameMode;
         switch (gameMode){
             case "NoRepeat":
-                currentGameMode = gameMode;
                 mode_text.setText("沒有重複數字");
-
                 break;
             case "HasRepeat":
                 mode_text.setText("可能出現重複數字");
-
                 break;
         }
     }
     void RestartGame(){
+
         totalPlayTime = 0;
         totalPlayLog = "";
         expectNumber = "";
         answer_debug.setText("");
         warning_textView.setText("");
         player_guess.setText("");
+        UpdateButton("default");
         RandomNumber();
     }
     void RandomNumber(){
@@ -101,7 +104,6 @@ public class GuessNumber extends AppCompatActivity{
                 break;
         }
         answer_debug.setText(expectNumber);
-
     }
 
     public void ClickButton_GuessNumber(View view){
@@ -118,6 +120,9 @@ public class GuessNumber extends AppCompatActivity{
                 outputText = NoRepeatGuess(playerGuessNumber);
                 break;
             case "HasRepeat":
+//                outputText = type_1A2B3C(playerGuessNumber);
+
+                outputText = HasRepeatGuess(playerGuessNumber);
                 break;
         }
 
@@ -164,14 +169,85 @@ public class GuessNumber extends AppCompatActivity{
 
         return "猜 " + totalPlayTime + "：            " + playerGuessNumber + "            結果: "+ A + "A" + B + "B";
     }
+    private String HasRepeatGuess(String playerGuessNumber) {
+        if(totalPlayLog.contains(playerGuessNumber)){
+            warning_textView.setText("您已經猜過這個數字！");
+            return "";
+        }
+
+        warning_textView.setText("");
+        totalPlayTime++;
+        int A = 0;
+        int B = 0;
+        int C = 0;
+        boolean[] repeatList = new boolean[10];
+        int[] answerRepeatTimesList = new int[10];
+        for(int i=0;i<10;i++) {
+            repeatList[i] = false;
+            answerRepeatTimesList[i] = 0;
+        }
+
+        for(int i=0;i<4;i++){
+            int number = expectNumber.charAt(i) - '0';
+            answerRepeatTimesList[number]++;
+        }
+
+        for(int x=0;x<4;x++){
+            char oneNumChar = playerGuessNumber.charAt(x);
+            for(int i=0;i<4;i++){
+                if(expectNumber.charAt(i) == oneNumChar){
+                    int playerGuessNumberInt = playerGuessNumber.charAt(i) - '0';
+
+                    //Repeat number detect.
+                    if(answerRepeatTimesList[playerGuessNumberInt] > 1){
+                        //first time
+                        if(!repeatList[playerGuessNumberInt]){
+                            repeatList[playerGuessNumberInt] = true;
+                            C++;
+                        }
+                    }
+
+                    if(i == x){
+                        A++;
+                    }else{
+                        B++;
+                    }
+                }
+            }
+            System.out.println("A: " + A + " - B: " + B + " - C: " + C);
+        }
+
+
+        if(A == 4){
+            WinGame();
+        }
+
+        return "猜 " + totalPlayTime + "：          " + playerGuessNumber + "            結果: "+ A + "A" + B + "B" + C + "C";
+    }
+
 
     public void WinGame(){
         warning_textView.setText("恭喜您！您猜對了！");
         GenerateAlertTextBox("恭喜答對", "恭喜您！您猜對了！\n您總共猜了 " + totalPlayTime +" 次", "","確認", 2);
-        int color = ContextCompat.getColor(GuessNumber.this, R.color.gray_500); // 獲取顏色資源
-        buttonGuess.setBackgroundTintList(ColorStateList.valueOf(color)); // 改變按鈕顏色
-        buttonGuess.setEnabled(false);
-        buttonGuess.setTextColor(Color.BLACK); // 改變按鈕顏色
+        UpdateButton("win");
+    }
+
+    public void UpdateButton(String type){
+        int color;
+        switch (type){
+            case "win":
+                color = ContextCompat.getColor(GuessNumber.this, R.color.gray_500); // 獲取顏色資源
+                buttonGuess.setBackgroundTintList(ColorStateList.valueOf(color)); // 改變按鈕顏色
+                buttonGuess.setEnabled(false);
+                buttonGuess.setTextColor(Color.BLACK); // 改變按鈕顏色
+                break;
+            case "default":
+                color = ContextCompat.getColor(GuessNumber.this, R.color.blue_500); // 獲取顏色資源
+                buttonGuess.setBackgroundTintList(ColorStateList.valueOf(color)); // 改變按鈕顏色
+                buttonGuess.setEnabled(true);
+                buttonGuess.setTextColor(Color.WHITE); // 改變按鈕顏色
+                break;
+        }
     }
     public void BackToTitleScreen(View view){
         GenerateAlertTextBox("返回主畫面", "您確定要離開嗎？", "取消", "好的", 0);
@@ -185,11 +261,7 @@ public class GuessNumber extends AppCompatActivity{
 
         builder.setTitle(Title)
                 .setMessage(Message)
-                .setNegativeButton(NegativeMsg, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // 取消的回應，這裡只是關閉對話框，不需要其他操作
-                    }
-                })
+                .setNegativeButton(NegativeMsg, null)
                 .setPositiveButton(PositiveMsg, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
@@ -203,6 +275,31 @@ public class GuessNumber extends AppCompatActivity{
                         }
                     }
                 })
+                .setCancelable(false)
+                .show();
+    }
+
+    public void ModeSelectionTextBox(View view){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        String[] options = {"沒有重複數字", "可能出現重複數字"};
+        builder.setTitle("選擇猜數字遊戲模式：")
+                .setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        System.out.println(which);
+                        switch (which){
+                            case 0:
+                                ModeChange("NoRepeat");
+                                break;
+                            case 1:
+                                ModeChange("HasRepeat");
+                                break;
+                        }
+                        RestartGame();
+                        Toast.makeText(GuessNumber.this, "模式已設定為：" + options[which], Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("取消", null)
                 .setCancelable(false)
                 .show();
     }
